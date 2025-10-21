@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { register } from '../services/authService';
 
 export default function RegisterScreen() {
@@ -107,6 +108,16 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <StatusBar style="dark" />
+      
+      {/* Nút quay lại trang chủ */}
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => router.replace('/')}
+        disabled={isLoading}
+      >
+        <Ionicons name="arrow-back" size={24} color="#007AFF" />
+        <Text style={styles.backButtonText}>Trang chủ</Text>
+      </TouchableOpacity>
       
       {/* Error Modal */}
       <Modal
@@ -278,6 +289,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 10,
+    gap: 8,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#007AFF',
+    fontWeight: '600',
   },
   scrollContent: {
     flexGrow: 1,
