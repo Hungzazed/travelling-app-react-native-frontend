@@ -6,6 +6,8 @@ export const CacheTTL = {
   BOOKINGS: 30 * 60 * 1000, 
   NOTIFICATIONS: 30 * 1000, 
   USER_PROFILE: 30 * 60 * 1000,
+  HOTELS: 300 * 60 * 1000,
+  HOTEL_DETAIL: 300 * 60 * 1000,
 };
 
 type FetchCallback<T> = () => Promise<T>;
@@ -199,6 +201,19 @@ export const createCacheKey = {
   },
   
   reviewDetail: (id: string) => `review:${id}`,
+  
+  hotels: (params?: any) => {
+    if (!params || Object.keys(params).length === 0) {
+      return 'hotels:all';
+    }
+    const sortedParams = Object.keys(params)
+      .sort()
+      .map(key => `${key}:${params[key]}`)
+      .join('|');
+    return `hotels:${sortedParams}`;
+  },
+  
+  hotelDetail: (id: string) => `hotel:${id}`,
 };
 
 export default CacheService;
