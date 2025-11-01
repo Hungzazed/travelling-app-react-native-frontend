@@ -12,9 +12,8 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useFocusEffect } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getCurrentUser, logout, updateCachedUser } from '../../services/authService';
-import { updateUser } from '../../services/userService';
+import { getCurrentUser, logout, updateCachedUser } from '../services/authService';
+import { updateUser } from '../services/userService';
 
 export default function ProfileScreen() {
   const router = useRouter();

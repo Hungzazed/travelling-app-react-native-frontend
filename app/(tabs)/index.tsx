@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -11,15 +11,15 @@ import {
   RefreshControl,
   Dimensions,
   Modal,
-} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { useRouter, useFocusEffect } from 'expo-router';
-import { getTours, Tour } from '../../services/tourService';
-import { getCurrentUser } from '../../services/authService';
-import { getUnreadCount } from '../../services/notificationService';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useRouter, useFocusEffect } from "expo-router";
+import { getTours, Tour } from "../../services/tourService";
+import { getCurrentUser } from "../../services/authService";
+import { getUnreadCount } from "../../services/notificationService";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 64) / 2;
 
 export default function HomeScreen() {
@@ -29,56 +29,59 @@ export default function HomeScreen() {
   const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Tất cả");
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const slideScrollRef = useRef<ScrollView>(null);
-  
-  // Filter states
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [sortBy, setSortBy] = useState('createdAt:desc');
 
-  const categories = ['Tất cả', 'Phổ biến', 'Tiết kiệm', 'Núi non'];
+  // Filter states
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt:desc");
+
+  const categories = ["Tất cả", "Phổ biến", "Tiết kiệm", "Núi non"];
   const sortOptions = [
-    { label: 'Mới nhất', value: 'createdAt:desc' },
-    { label: 'Cũ nhất', value: 'createdAt:asc' },
-    { label: 'Giá thấp đến cao', value: 'pricePerPerson:asc' },
-    { label: 'Giá cao đến thấp', value: 'pricePerPerson:desc' },
-    { label: 'Tên A-Z', value: 'name:asc' },
-    { label: 'Tên Z-A', value: 'name:desc' },
+    { label: "Mới nhất", value: "createdAt:desc" },
+    { label: "Cũ nhất", value: "createdAt:asc" },
+    { label: "Giá thấp đến cao", value: "pricePerPerson:asc" },
+    { label: "Giá cao đến thấp", value: "pricePerPerson:desc" },
+    { label: "Tên A-Z", value: "name:asc" },
+    { label: "Tên Z-A", value: "name:desc" },
   ];
 
   const bannerSlides = [
     {
       id: 1,
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-      title: 'Khám phá Sapa',
-      subtitle: 'Thiên nhiên núi rừng hùng vĩ',
-      color: '#4CAF50',
+      image:
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
+      title: "Khám phá Sapa",
+      subtitle: "Thiên nhiên núi rừng hùng vĩ",
+      color: "#4CAF50",
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800',
-      title: 'Vịnh Hạ Long',
-      subtitle: 'Di sản thiên nhiên thế giới',
-      color: '#2196F3',
+      image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800",
+      title: "Vịnh Hạ Long",
+      subtitle: "Di sản thiên nhiên thế giới",
+      color: "#2196F3",
     },
     {
       id: 3,
-      image: 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800',
-      title: 'Đà Nẵng - Hội An',
-      subtitle: 'Thành phố đáng sống nhất',
-      color: '#FF9800',
+      image:
+        "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800",
+      title: "Đà Nẵng - Hội An",
+      subtitle: "Thành phố đáng sống nhất",
+      color: "#FF9800",
     },
     {
       id: 4,
-      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
-      title: 'Biển Nha Trang',
-      subtitle: 'Thiên đường nghỉ dưỡng',
-      color: '#00BCD4',
+      image:
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+      title: "Biển Nha Trang",
+      subtitle: "Thiên đường nghỉ dưỡng",
+      color: "#00BCD4",
     },
   ];
 
@@ -91,16 +94,16 @@ export default function HomeScreen() {
     React.useCallback(() => {
       const reloadUserData = async () => {
         try {
-          console.log('Reloading user data on focus...');
+          console.log("Reloading user data on focus...");
           const userData = await getCurrentUser();
-          console.log('Updated user data:', userData);
+          console.log("Updated user data:", userData);
           setUser(userData);
           await loadUnreadNotifications();
         } catch (error) {
-          console.error('Error reloading user data:', error);
+          console.error("Error reloading user data:", error);
         }
       };
-      
+
       reloadUserData();
     }, [])
   );
@@ -133,14 +136,14 @@ export default function HomeScreen() {
       setIsLoading(true);
       const userData = await getCurrentUser();
       setUser(userData);
-      
+
       // Load initial tours
       await loadDataByCategory();
-      
+
       // Load unread notifications count
       await loadUnreadNotifications();
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -151,7 +154,7 @@ export default function HomeScreen() {
       const count = await getUnreadCount();
       setUnreadNotifications(count);
     } catch (error) {
-      console.error('Error loading unread notifications:', error);
+      console.error("Error loading unread notifications:", error);
     }
   };
 
@@ -163,24 +166,24 @@ export default function HomeScreen() {
       };
 
       // Filter by category based on seed data
-      if (selectedCategory === 'Phổ biến') {
+      if (selectedCategory === "Phổ biến") {
         // Popular: Get newest tours (Đà Nẵng, Nha Trang tours are popular)
         params.limit = 20;
-        params.sortBy = 'createdAt:desc';
-      } else if (selectedCategory === 'Tiết kiệm') {
+        params.sortBy = "createdAt:desc";
+      } else if (selectedCategory === "Tiết kiệm") {
         // Budget friendly: Tours <= 3,000,000 VND (Hạ Long 2.5tr, Vũng Tàu 1.8tr)
         params.maxPrice = 3000000;
-        params.sortBy = 'pricePerPerson:asc';
-      } else if (selectedCategory === 'Núi non') {
+        params.sortBy = "pricePerPerson:asc";
+      } else if (selectedCategory === "Núi non") {
         // Mountains: Sapa (Lào Cai) - vùng núi
-        params.destination = 'sapa|lào cai|mộc châu|đà lạt|núi';
+        params.destination = "sapa|lào cai|mộc châu|đà lạt|núi";
       }
 
       const toursData = await getTours(params);
       setTours(toursData.results);
       setFilteredTours(toursData.results);
     } catch (error) {
-      console.error('Error loading tours by category:', error);
+      console.error("Error loading tours by category:", error);
     }
   };
 
@@ -188,14 +191,14 @@ export default function HomeScreen() {
     // When user searches, navigate to all-tours page with search query
     if (searchQuery.trim()) {
       router.push({
-        pathname: '/all-tours' as any,
-        params: { 
-          category: 'search',
-          query: searchQuery.trim()
-        }
+        pathname: "/all-tours" as any,
+        params: {
+          category: "search",
+          query: searchQuery.trim(),
+        },
       });
       // Clear search input after navigating
-      setSearchQuery('');
+      setSearchQuery("");
     }
   };
 
@@ -203,7 +206,7 @@ export default function HomeScreen() {
     try {
       setIsLoading(true);
       setShowFilterModal(false);
-      
+
       const params: any = {
         limit: 100,
         sortBy,
@@ -215,18 +218,18 @@ export default function HomeScreen() {
       const toursData = await getTours(params);
       setTours(toursData.results);
     } catch (error) {
-      console.error('Error applying filters:', error);
+      console.error("Error applying filters:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const resetFilters = () => {
-    setMinPrice('');
-    setMaxPrice('');
-    setSortBy('createdAt:desc');
-    setSearchQuery('');
-    setSelectedCategory('Tất cả');
+    setMinPrice("");
+    setMaxPrice("");
+    setSortBy("createdAt:desc");
+    setSearchQuery("");
+    setSelectedCategory("Tất cả");
     loadData();
   };
 
@@ -240,52 +243,62 @@ export default function HomeScreen() {
   const displayTours = tours;
   const topPicks = displayTours.slice(0, 4);
   const groupTours = displayTours.slice(4, 8);
-  const budgetTours = displayTours.filter(tour => tour.pricePerPerson <= 3000000).slice(0, 4);
-  const luxuryTours = displayTours.filter(tour => tour.pricePerPerson > 4000000).slice(0, 4);
-  const adventureTours = displayTours.filter(tour => 
-    tour.destination.toLowerCase().includes('núi') || 
-    tour.destination.toLowerCase().includes('sapa') ||
-    tour.destination.toLowerCase().includes('đà lạt')
-  ).slice(0, 4);
-  const beachTours = displayTours.filter(tour => 
-    tour.destination.toLowerCase().includes('nha trang') || 
-    tour.destination.toLowerCase().includes('vũng tàu') ||
-    tour.destination.toLowerCase().includes('đà nẵng') ||
-    tour.destination.toLowerCase().includes('phú quốc')
-  ).slice(0, 4);
+  const budgetTours = displayTours
+    .filter((tour) => tour.pricePerPerson <= 3000000)
+    .slice(0, 4);
+  const luxuryTours = displayTours
+    .filter((tour) => tour.pricePerPerson > 4000000)
+    .slice(0, 4);
+  const adventureTours = displayTours
+    .filter(
+      (tour) =>
+        tour.destination.toLowerCase().includes("núi") ||
+        tour.destination.toLowerCase().includes("sapa") ||
+        tour.destination.toLowerCase().includes("đà lạt")
+    )
+    .slice(0, 4);
+  const beachTours = displayTours
+    .filter(
+      (tour) =>
+        tour.destination.toLowerCase().includes("nha trang") ||
+        tour.destination.toLowerCase().includes("vũng tàu") ||
+        tour.destination.toLowerCase().includes("đà nẵng") ||
+        tour.destination.toLowerCase().includes("phú quốc")
+    )
+    .slice(0, 4);
 
   const handleSeeAllTopPicks = () => {
     router.push({
-      pathname: '/all-tours' as any,
-      params: { category: 'top-picks' }
+      pathname: "/all-tours" as any,
+      params: { category: "top-picks" },
     });
   };
 
   const handleSeeAllGroupTours = () => {
     router.push({
-      pathname: '/all-tours' as any,
-      params: { category: 'group-tours' }
+      pathname: "/all-tours" as any,
+      params: { category: "group-tours" },
     });
   };
 
   const handleSeeAllBudgetTours = () => {
     router.push({
-      pathname: '/all-tours' as any,
-      params: { category: 'top-picks' }
+      pathname: "/all-tours" as any,
+      params: { category: "top-picks" },
     });
   };
 
   const handleSeeAllLuxuryTours = () => {
     router.push({
-      pathname: '/all-tours' as any,
-      params: { category: 'top-picks' }
+      pathname: "/all-tours" as any,
+      params: { category: "top-picks" },
     });
   };
 
   const handleSeeAllBeachTours = () => {
     router.push({
-      pathname: '/all-tours' as any,
-      params: { category: 'top-picks' }
+      pathname: "/all-tours" as any,
+      params: { category: "top-picks" },
     });
   };
 
@@ -301,29 +314,33 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      
+
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View style={styles.headerLeft}>
-            <Image
-              source={{ uri: user?.avatar || 'https://i.pravatar.cc/100' }}
-              style={styles.avatar}
-            />
+            <View style={styles.avatarPlaceholder}>
+              <TouchableOpacity onPress={() => router.push("/(tabs)/profile")}>
+                <Text style={styles.avatarText}>
+                {user?.name?.charAt(0).toUpperCase() || "B"}
+              </Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.headerText}>
               <Text style={styles.greetingSmall}>Xin chào,</Text>
-              <Text style={styles.greetingName}>{user?.name?.split(' ')[0] || 'Bạn'} 👋</Text>
+              <Text style={styles.greetingName}>
+                {user?.name?.split(" ")[0] || "Bạn"}
+              </Text>
             </View>
           </View>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.notificationButton}
-            onPress={() => router.push('/(tabs)/notifications' as any)}
-          >
+            onPress={() => router.push("/(tabs)/notifications" as any)}>
             <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
             {unreadNotifications > 0 && (
               <View style={styles.notificationBadge}>
                 <Text style={styles.notificationBadgeText}>
-                  {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                  {unreadNotifications > 99 ? "99+" : unreadNotifications}
                 </Text>
               </View>
             )}
@@ -336,8 +353,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
+        }>
         {/* Search Section */}
         <View style={styles.searchSection}>
           <View style={styles.searchContainer}>
@@ -354,25 +370,24 @@ export default function HomeScreen() {
               returnKeyType="search"
             />
             {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
                 <Ionicons name="close-circle" size={20} color="#999" />
               </TouchableOpacity>
             )}
           </View>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={styles.filterButton}
             onPress={() => setShowFilterModal(true)}
           >
             <MaterialIcons name="tune" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Categories */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesContainer}
-        >
+          contentContainerStyle={styles.categoriesContainer}>
           {categories.map((category) => (
             <TouchableOpacity
               key={category}
@@ -380,14 +395,12 @@ export default function HomeScreen() {
                 styles.categoryPill,
                 selectedCategory === category && styles.categoryPillActive,
               ]}
-              onPress={() => setSelectedCategory(category)}
-            >
+              onPress={() => setSelectedCategory(category)}>
               <Text
                 style={[
                   styles.categoryText,
                   selectedCategory === category && styles.categoryTextActive,
-                ]}
-              >
+                ]}>
                 {category}
               </Text>
             </TouchableOpacity>
@@ -410,8 +423,7 @@ export default function HomeScreen() {
             scrollEventThrottle={200}
             decelerationRate="fast"
             snapToInterval={width}
-            snapToAlignment="center"
-          >
+            snapToAlignment="center">
             {bannerSlides.map((slide, index) => (
               <TouchableOpacity
                 key={slide.id}
@@ -419,11 +431,10 @@ export default function HomeScreen() {
                 activeOpacity={0.95}
                 onPress={() => {
                   router.push({
-                    pathname: '/all-tours' as any,
-                    params: { category: 'top-picks' }
+                    pathname: "/all-tours" as any,
+                    params: { category: "top-picks" },
                   });
-                }}
-              >
+                }}>
                 <Image
                   source={{ uri: slide.image }}
                   style={styles.bannerImage}
@@ -433,11 +444,22 @@ export default function HomeScreen() {
                   <View style={styles.bannerContent}>
                     <View style={styles.bannerTextContainer}>
                       <Text style={styles.bannerTitle}>{slide.title}</Text>
-                      <Text style={styles.bannerSubtitle}>{slide.subtitle}</Text>
+                      <Text style={styles.bannerSubtitle}>
+                        {slide.subtitle}
+                      </Text>
                     </View>
-                    <TouchableOpacity style={styles.bannerButton}>
+                    <TouchableOpacity style={styles.bannerButton} onPress={() => {
+                  router.push({
+                    pathname: "/all-tours" as any,
+                    params: { category: "top-picks" },
+                  });
+                }}>
                       <Text style={styles.bannerButtonText}>Xem ngay</Text>
-                      <Ionicons name="chevron-forward" size={18} color="#FFFFFF" />
+                      <Ionicons
+                        name="chevron-forward"
+                        size={18}
+                        color="#FFFFFF"
+                      />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -456,8 +478,7 @@ export default function HomeScreen() {
                     x: index * width,
                     animated: true,
                   });
-                }}
-              >
+                }}>
                 <View
                   style={[
                     styles.indicator,
@@ -484,29 +505,31 @@ export default function HomeScreen() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.picksContainer}
-          >
+            contentContainerStyle={styles.picksContainer}>
             {topPicks.map((tour) => (
               <TouchableOpacity
                 key={tour.id}
                 style={styles.pickCard}
                 onPress={() => {
-                  const hasHotels = Array.isArray(tour.hotels) && tour.hotels.length > 0;
+                  const hasHotels =
+                    Array.isArray(tour.hotels) && tour.hotels.length > 0;
                   if (hasHotels) {
-                    router.push({ 
-                      pathname: '/tour-hotel-booking' as any, 
-                      params: { tourId: tour.id } 
+                    router.push({
+                      pathname: "/tour-hotel-booking" as any,
+                      params: { tourId: tour.id },
                     });
                   } else {
-                    router.push({ 
-                      pathname: '/tour-detail' as any, 
-                      params: { id: tour.id } 
+                    router.push({
+                      pathname: "/tour-detail" as any,
+                      params: { id: tour.id },
                     });
                   }
-                }}
-              >
+                }}>
                 <Image
-                  source={{ uri: tour.images?.[0] || 'https://via.placeholder.com/300x200' }}
+                  source={{
+                    uri:
+                      tour.images?.[0] || "https://via.placeholder.com/300x200",
+                  }}
                   style={styles.pickImage}
                 />
                 <View style={styles.pickOverlay}>
@@ -528,11 +551,15 @@ export default function HomeScreen() {
                   <View style={styles.pickFooter}>
                     <View>
                       <Text style={styles.pickPrice}>
-                        {tour.pricePerPerson.toLocaleString('vi-VN')}₫
+                        {tour.pricePerPerson.toLocaleString("vi-VN")}₫
                       </Text>
                     </View>
                     <View style={styles.pickBookButton}>
-                      <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+                      <Ionicons
+                        name="arrow-forward"
+                        size={18}
+                        color="#FFFFFF"
+                      />
                     </View>
                   </View>
                 </View>
@@ -556,29 +583,31 @@ export default function HomeScreen() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.picksContainer}
-          >
+            contentContainerStyle={styles.picksContainer}>
             {groupTours.map((tour) => (
               <TouchableOpacity
                 key={tour.id}
                 style={styles.pickCard}
                 onPress={() => {
-                  const hasHotels = Array.isArray(tour.hotels) && tour.hotels.length > 0;
+                  const hasHotels =
+                    Array.isArray(tour.hotels) && tour.hotels.length > 0;
                   if (hasHotels) {
-                    router.push({ 
-                      pathname: '/tour-hotel-booking' as any, 
-                      params: { tourId: tour.id } 
+                    router.push({
+                      pathname: "/tour-hotel-booking" as any,
+                      params: { tourId: tour.id },
                     });
                   } else {
-                    router.push({ 
-                      pathname: '/tour-detail' as any, 
-                      params: { id: tour.id } 
+                    router.push({
+                      pathname: "/tour-detail" as any,
+                      params: { id: tour.id },
                     });
                   }
-                }}
-              >
+                }}>
                 <Image
-                  source={{ uri: tour.images?.[0] || 'https://via.placeholder.com/300x200' }}
+                  source={{
+                    uri:
+                      tour.images?.[0] || "https://via.placeholder.com/300x200",
+                  }}
                   style={styles.pickImage}
                 />
                 <View style={styles.groupTourBadge}>
@@ -604,11 +633,15 @@ export default function HomeScreen() {
                   <View style={styles.pickFooter}>
                     <View>
                       <Text style={styles.pickPrice}>
-                        {tour.pricePerPerson.toLocaleString('vi-VN')}₫
+                        {tour.pricePerPerson.toLocaleString("vi-VN")}₫
                       </Text>
                     </View>
                     <View style={styles.pickBookButton}>
-                      <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+                      <Ionicons
+                        name="arrow-forward"
+                        size={18}
+                        color="#FFFFFF"
+                      />
                     </View>
                   </View>
                 </View>
@@ -633,29 +666,32 @@ export default function HomeScreen() {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.picksContainer}
-            >
+              contentContainerStyle={styles.picksContainer}>
               {budgetTours.map((tour) => (
                 <TouchableOpacity
                   key={tour.id}
                   style={styles.pickCard}
                   onPress={() => {
-                    const hasHotels = Array.isArray(tour.hotels) && tour.hotels.length > 0;
+                    const hasHotels =
+                      Array.isArray(tour.hotels) && tour.hotels.length > 0;
                     if (hasHotels) {
-                      router.push({ 
-                        pathname: '/tour-hotel-booking' as any, 
-                        params: { tourId: tour.id } 
+                      router.push({
+                        pathname: "/tour-hotel-booking" as any,
+                        params: { tourId: tour.id },
                       });
                     } else {
-                      router.push({ 
-                        pathname: '/tour-detail' as any, 
-                        params: { id: tour.id } 
+                      router.push({
+                        pathname: "/tour-detail" as any,
+                        params: { id: tour.id },
                       });
                     }
-                  }}
-                >
+                  }}>
                   <Image
-                    source={{ uri: tour.images?.[0] || 'https://via.placeholder.com/300x200' }}
+                    source={{
+                      uri:
+                        tour.images?.[0] ||
+                        "https://via.placeholder.com/300x200",
+                    }}
                     style={styles.pickImage}
                   />
                   <View style={styles.budgetBadge}>
@@ -673,7 +709,11 @@ export default function HomeScreen() {
                       {tour.name}
                     </Text>
                     <View style={styles.pickLocationRow}>
-                      <Ionicons name="location-outline" size={14} color="#999" />
+                      <Ionicons
+                        name="location-outline"
+                        size={14}
+                        color="#999"
+                      />
                       <Text style={styles.pickLocation} numberOfLines={1}>
                         {tour.destination}
                       </Text>
@@ -682,11 +722,15 @@ export default function HomeScreen() {
                       <View>
                         <Text style={styles.pickPriceLabel}>Từ</Text>
                         <Text style={styles.pickPrice}>
-                          {tour.pricePerPerson.toLocaleString('vi-VN')}₫
+                          {tour.pricePerPerson.toLocaleString("vi-VN")}₫
                         </Text>
                       </View>
                       <View style={styles.pickBookButton}>
-                        <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+                        <Ionicons
+                          name="arrow-forward"
+                          size={18}
+                          color="#FFFFFF"
+                        />
                       </View>
                     </View>
                   </View>
@@ -712,29 +756,32 @@ export default function HomeScreen() {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.picksContainer}
-            >
+              contentContainerStyle={styles.picksContainer}>
               {beachTours.map((tour) => (
                 <TouchableOpacity
                   key={tour.id}
                   style={styles.pickCard}
                   onPress={() => {
-                    const hasHotels = Array.isArray(tour.hotels) && tour.hotels.length > 0;
+                    const hasHotels =
+                      Array.isArray(tour.hotels) && tour.hotels.length > 0;
                     if (hasHotels) {
-                      router.push({ 
-                        pathname: '/tour-hotel-booking' as any, 
-                        params: { tourId: tour.id } 
+                      router.push({
+                        pathname: "/tour-hotel-booking" as any,
+                        params: { tourId: tour.id },
                       });
                     } else {
-                      router.push({ 
-                        pathname: '/tour-detail' as any, 
-                        params: { id: tour.id } 
+                      router.push({
+                        pathname: "/tour-detail" as any,
+                        params: { id: tour.id },
                       });
                     }
-                  }}
-                >
+                  }}>
                   <Image
-                    source={{ uri: tour.images?.[0] || 'https://via.placeholder.com/300x200' }}
+                    source={{
+                      uri:
+                        tour.images?.[0] ||
+                        "https://via.placeholder.com/300x200",
+                    }}
                     style={styles.pickImage}
                   />
                   <View style={styles.beachBadge}>
@@ -752,7 +799,11 @@ export default function HomeScreen() {
                       {tour.name}
                     </Text>
                     <View style={styles.pickLocationRow}>
-                      <Ionicons name="location-outline" size={14} color="#999" />
+                      <Ionicons
+                        name="location-outline"
+                        size={14}
+                        color="#999"
+                      />
                       <Text style={styles.pickLocation} numberOfLines={1}>
                         {tour.destination}
                       </Text>
@@ -761,11 +812,15 @@ export default function HomeScreen() {
                       <View>
                         <Text style={styles.pickPriceLabel}>Từ</Text>
                         <Text style={styles.pickPrice}>
-                          {tour.pricePerPerson.toLocaleString('vi-VN')}₫
+                          {tour.pricePerPerson.toLocaleString("vi-VN")}₫
                         </Text>
                       </View>
                       <View style={styles.pickBookButton}>
-                        <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+                        <Ionicons
+                          name="arrow-forward"
+                          size={18}
+                          color="#FFFFFF"
+                        />
                       </View>
                     </View>
                   </View>
@@ -791,29 +846,32 @@ export default function HomeScreen() {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.picksContainer}
-            >
+              contentContainerStyle={styles.picksContainer}>
               {luxuryTours.map((tour) => (
                 <TouchableOpacity
                   key={tour.id}
                   style={styles.pickCard}
                   onPress={() => {
-                    const hasHotels = Array.isArray(tour.hotels) && tour.hotels.length > 0;
+                    const hasHotels =
+                      Array.isArray(tour.hotels) && tour.hotels.length > 0;
                     if (hasHotels) {
-                      router.push({ 
-                        pathname: '/tour-hotel-booking' as any, 
-                        params: { tourId: tour.id } 
+                      router.push({
+                        pathname: "/tour-hotel-booking" as any,
+                        params: { tourId: tour.id },
                       });
                     } else {
-                      router.push({ 
-                        pathname: '/tour-detail' as any, 
-                        params: { id: tour.id } 
+                      router.push({
+                        pathname: "/tour-detail" as any,
+                        params: { id: tour.id },
                       });
                     }
-                  }}
-                >
+                  }}>
                   <Image
-                    source={{ uri: tour.images?.[0] || 'https://via.placeholder.com/300x200' }}
+                    source={{
+                      uri:
+                        tour.images?.[0] ||
+                        "https://via.placeholder.com/300x200",
+                    }}
                     style={styles.pickImage}
                   />
                   <View style={styles.luxuryBadge}>
@@ -831,7 +889,11 @@ export default function HomeScreen() {
                       {tour.name}
                     </Text>
                     <View style={styles.pickLocationRow}>
-                      <Ionicons name="location-outline" size={14} color="#999" />
+                      <Ionicons
+                        name="location-outline"
+                        size={14}
+                        color="#999"
+                      />
                       <Text style={styles.pickLocation} numberOfLines={1}>
                         {tour.destination}
                       </Text>
@@ -840,11 +902,15 @@ export default function HomeScreen() {
                       <View>
                         <Text style={styles.pickPriceLabel}>Từ</Text>
                         <Text style={styles.pickPrice}>
-                          {tour.pricePerPerson.toLocaleString('vi-VN')}₫
+                          {tour.pricePerPerson.toLocaleString("vi-VN")}₫
                         </Text>
                       </View>
                       <View style={styles.pickBookButton}>
-                        <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+                        <Ionicons
+                          name="arrow-forward"
+                          size={18}
+                          color="#FFFFFF"
+                        />
                       </View>
                     </View>
                   </View>
@@ -862,8 +928,7 @@ export default function HomeScreen() {
         visible={showFilterModal}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setShowFilterModal(false)}
-      >
+        onRequestClose={() => setShowFilterModal(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
@@ -884,18 +949,20 @@ export default function HomeScreen() {
                       styles.sortOption,
                       sortBy === option.value && styles.sortOptionActive,
                     ]}
-                    onPress={() => setSortBy(option.value)}
-                  >
+                    onPress={() => setSortBy(option.value)}>
                     <Text
                       style={[
                         styles.sortOptionText,
                         sortBy === option.value && styles.sortOptionTextActive,
-                      ]}
-                    >
+                      ]}>
                       {option.label}
                     </Text>
                     {sortBy === option.value && (
-                      <Ionicons name="checkmark-circle" size={20} color="#2196F3" />
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={20}
+                        color="#2196F3"
+                      />
                     )}
                   </TouchableOpacity>
                 ))}
@@ -937,28 +1004,25 @@ export default function HomeScreen() {
                   <TouchableOpacity
                     style={styles.quickFilterPill}
                     onPress={() => {
-                      setMinPrice('');
-                      setMaxPrice('3000000');
-                    }}
-                  >
+                      setMinPrice("");
+                      setMaxPrice("3000000");
+                    }}>
                     <Text style={styles.quickFilterText}>Dưới 3tr</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.quickFilterPill}
                     onPress={() => {
-                      setMinPrice('3000000');
-                      setMaxPrice('7000000');
-                    }}
-                  >
+                      setMinPrice("3000000");
+                      setMaxPrice("7000000");
+                    }}>
                     <Text style={styles.quickFilterText}>3tr - 7tr</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.quickFilterPill}
                     onPress={() => {
-                      setMinPrice('7000000');
-                      setMaxPrice('');
-                    }}
-                  >
+                      setMinPrice("7000000");
+                      setMaxPrice("");
+                    }}>
                     <Text style={styles.quickFilterText}>Trên 7tr</Text>
                   </TouchableOpacity>
                 </View>
@@ -969,14 +1033,12 @@ export default function HomeScreen() {
             <View style={styles.modalActions}>
               <TouchableOpacity
                 style={styles.resetButton}
-                onPress={resetFilters}
-              >
+                onPress={resetFilters}>
                 <Text style={styles.resetButtonText}>Đặt lại</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.applyButton}
-                onPress={applyFilters}
-              >
+                onPress={applyFilters}>
                 <Text style={styles.applyButtonText}>Áp dụng</Text>
               </TouchableOpacity>
             </View>
@@ -990,18 +1052,18 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: "#F8F9FA",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F8F9FA',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F8F9FA",
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   scrollView: {
     flex: 1,
@@ -1010,21 +1072,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 30,
     paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 2,
   },
   headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   avatar: {
@@ -1033,51 +1095,51 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     marginRight: 12,
     borderWidth: 2,
-    borderColor: '#2196F3',
+    borderColor: "#2196F3",
   },
   headerText: {
     flex: 1,
   },
   greetingSmall: {
     fontSize: 13,
-    color: '#999',
-    fontWeight: '400',
+    color: "#999",
+    fontWeight: "400",
   },
   greetingName: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: "700",
+    color: "#1A1A1A",
     marginTop: 2,
   },
   notificationButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F5F7FA',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    backgroundColor: "#F5F7FA",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
   },
   notificationBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 6,
     right: 6,
-    backgroundColor: '#FF4757',
+    backgroundColor: "#FF4757",
     width: 18,
     height: 18,
     borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: "#FFFFFF",
   },
   notificationBadgeText: {
     fontSize: 10,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   searchSection: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 20,
     marginTop: 20,
     marginBottom: 20,
@@ -1085,13 +1147,13 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     paddingHorizontal: 16,
     height: 50,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -1100,17 +1162,17 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: '#1A1A1A',
+    color: "#1A1A1A",
     marginLeft: 8,
   },
   filterButton: {
     width: 50,
     height: 50,
     borderRadius: 12,
-    backgroundColor: '#2196F3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#2196F3',
+    backgroundColor: "#2196F3",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#2196F3",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -1121,36 +1183,36 @@ const styles = StyleSheet.create({
     gap: 0,
     marginBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E8E8',
+    borderBottomColor: "#E8E8E8",
   },
   categoryPill: {
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
+    borderBottomColor: "transparent",
     marginRight: 8,
   },
   categoryPillActive: {
-    borderBottomColor: '#2196F3',
+    borderBottomColor: "#2196F3",
   },
   categoryText: {
     fontSize: 15,
-    fontWeight: '500',
-    color: '#999999',
+    fontWeight: "500",
+    color: "#999999",
   },
   categoryTextActive: {
-    color: '#000000',
-    fontWeight: '600',
+    color: "#000000",
+    fontWeight: "600",
   },
   // Banner Slideshow Styles
   bannerContainer: {
     marginHorizontal: 16,
     marginBottom: 28,
     height: 180,
-    position: 'relative',
+    position: "relative",
     borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
@@ -1159,23 +1221,23 @@ const styles = StyleSheet.create({
   bannerSlide: {
     width: width - 32,
     height: 180,
-    position: 'relative',
+    position: "relative",
   },
   bannerImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   bannerOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   bannerContent: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     padding: 20,
     paddingTop: 24,
     paddingBottom: 20,
@@ -1185,32 +1247,32 @@ const styles = StyleSheet.create({
   },
   bannerTitle: {
     fontSize: 26,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    fontWeight: "800",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
     letterSpacing: 0.3,
   },
   bannerSubtitle: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#FFFFFF',
+    fontWeight: "500",
+    color: "#FFFFFF",
     opacity: 0.95,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
   bannerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#2196F3',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#2196F3",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 25,
     gap: 6,
-    alignSelf: 'flex-start',
-    shadowColor: '#2196F3',
+    alignSelf: "flex-start",
+    shadowColor: "#2196F3",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
     shadowRadius: 6,
@@ -1218,53 +1280,53 @@ const styles = StyleSheet.create({
   },
   bannerButtonText: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   slideIndicators: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 12,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     gap: 6,
   },
   indicator: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
   indicatorActive: {
     width: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   section: {
     marginBottom: 28,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     marginBottom: 16,
   },
   sectionTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: "700",
+    color: "#1A1A1A",
   },
   seeAll: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#2196F3',
+    fontWeight: "600",
+    color: "#2196F3",
   },
   picksContainer: {
     paddingHorizontal: 20,
@@ -1273,28 +1335,28 @@ const styles = StyleSheet.create({
   pickCard: {
     width: 260,
     borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 5,
   },
   pickImage: {
-    width: '100%',
+    width: "100%",
     height: 160,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   pickOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 12,
     right: 12,
   },
   pickRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
@@ -1302,81 +1364,81 @@ const styles = StyleSheet.create({
   },
   pickRatingText: {
     fontSize: 13,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: "700",
+    color: "#1A1A1A",
   },
   pickInfo: {
     padding: 14,
   },
   pickName: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: "700",
+    color: "#1A1A1A",
     marginBottom: 6,
   },
   pickLocationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
     gap: 4,
   },
   pickLocation: {
     fontSize: 13,
-    color: '#999',
+    color: "#999",
     flex: 1,
   },
   pickFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   pickPriceLabel: {
     fontSize: 11,
-    color: '#999',
+    color: "#999",
     marginBottom: 2,
   },
   pickPrice: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#2196F3',
+    fontWeight: "700",
+    color: "#2196F3",
   },
   pickBookButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#2196F3',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#2196F3",
+    justifyContent: "center",
+    alignItems: "center",
   },
   groupToursGrid: {
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
   },
   groupTourCard: {
     width: CARD_WIDTH,
     borderRadius: 14,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
   },
   groupTourImage: {
-    width: '100%',
+    width: "100%",
     height: 120,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   groupTourBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(33, 150, 243, 0.9)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(33, 150, 243, 0.9)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -1384,16 +1446,16 @@ const styles = StyleSheet.create({
   },
   groupTourBadgeText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   budgetBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(76, 175, 80, 0.9)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(76, 175, 80, 0.9)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -1401,16 +1463,16 @@ const styles = StyleSheet.create({
   },
   budgetBadgeText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   beachBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 188, 212, 0.9)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 188, 212, 0.9)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -1418,16 +1480,16 @@ const styles = StyleSheet.create({
   },
   beachBadgeText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   luxuryBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(156, 39, 176, 0.9)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(156, 39, 176, 0.9)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -1435,122 +1497,122 @@ const styles = StyleSheet.create({
   },
   luxuryBadgeText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   groupTourInfo: {
     padding: 12,
   },
   groupTourName: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: "700",
+    color: "#1A1A1A",
     marginBottom: 6,
     lineHeight: 18,
     minHeight: 36,
   },
   groupTourLocationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
     gap: 4,
   },
   groupTourLocation: {
     fontSize: 12,
-    color: '#999',
+    color: "#999",
     flex: 1,
   },
   groupTourFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   groupTourPriceLabel: {
     fontSize: 10,
-    color: '#999',
+    color: "#999",
     marginBottom: 2,
   },
   groupTourPrice: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#2196F3',
+    fontWeight: "700",
+    color: "#2196F3",
   },
   groupTourRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 3,
   },
   groupTourRatingText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#1A1A1A',
+    fontWeight: "600",
+    color: "#1A1A1A",
   },
   // Modal Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingTop: 20,
-    maxHeight: '85%',
+    maxHeight: "85%",
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: "#F0F0F0",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: "700",
+    color: "#1A1A1A",
   },
   filterSection: {
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: "#F0F0F0",
   },
   filterLabel: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: "700",
+    color: "#1A1A1A",
     marginBottom: 12,
   },
   sortOption: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: "#F8F9FA",
     borderRadius: 12,
     marginBottom: 8,
   },
   sortOptionActive: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: "#E3F2FD",
     borderWidth: 1,
-    borderColor: '#2196F3',
+    borderColor: "#2196F3",
   },
   sortOptionText: {
     fontSize: 15,
-    color: '#666',
-    fontWeight: '500',
+    color: "#666",
+    fontWeight: "500",
   },
   sortOptionTextActive: {
-    color: '#2196F3',
-    fontWeight: '600',
+    color: "#2196F3",
+    fontWeight: "600",
   },
   priceInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   priceInputWrapper: {
@@ -1558,73 +1620,73 @@ const styles = StyleSheet.create({
   },
   priceInputLabel: {
     fontSize: 13,
-    color: '#999',
+    color: "#999",
     marginBottom: 6,
   },
   priceInput: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: "#F8F9FA",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#1A1A1A',
+    color: "#1A1A1A",
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: "#E0E0E0",
   },
   priceSeparator: {
     fontSize: 18,
-    color: '#999',
+    color: "#999",
     marginTop: 20,
   },
   quickFiltersRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   quickFilterPill: {
     flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 14,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: "#F8F9FA",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
-    alignItems: 'center',
+    borderColor: "#E0E0E0",
+    alignItems: "center",
   },
   quickFilterText: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#666',
+    fontWeight: "600",
+    color: "#666",
   },
   modalActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 20,
     paddingVertical: 16,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-    backgroundColor: '#FFFFFF',
+    borderTopColor: "#F0F0F0",
+    backgroundColor: "#FFFFFF",
   },
   resetButton: {
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: "#F8F9FA",
     borderWidth: 1,
-    borderColor: '#E0E0E0',
-    alignItems: 'center',
+    borderColor: "#E0E0E0",
+    alignItems: "center",
   },
   resetButtonText: {
     fontSize: 15,
-    fontWeight: '600',
-    color: '#666',
+    fontWeight: "600",
+    color: "#666",
   },
   applyButton: {
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: '#2196F3',
-    alignItems: 'center',
-    shadowColor: '#2196F3',
+    backgroundColor: "#2196F3",
+    alignItems: "center",
+    shadowColor: "#2196F3",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -1632,7 +1694,22 @@ const styles = StyleSheet.create({
   },
   applyButtonText: {
     fontSize: 15,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
+avatarPlaceholder: {
+  width: 50,
+  height: 50,
+  borderRadius: 25,
+  backgroundColor: '#007bff', // hoặc màu khác
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 12,
+},
+
+avatarText: {
+  color: '#fff',
+  fontSize: 20,
+  fontWeight: 'bold',
+},
 });

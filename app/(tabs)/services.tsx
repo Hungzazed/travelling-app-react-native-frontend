@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { getServices, Service, ServiceType, getServiceTypeLabel, getServiceTypeIcon } from '../../services/serviceService';
-
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 export default function ServicesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [services, setServices] = useState<Service[]>([]);
@@ -117,7 +117,7 @@ export default function ServicesScreen() {
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Ionicons name="search-outline" size={20} color="#2196F3" style={{ marginRight: 8 }} />
           <TextInput
             style={styles.searchInput}
             placeholder="Tìm kiếm dịch vụ..."

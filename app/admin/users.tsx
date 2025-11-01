@@ -53,10 +53,10 @@ const Toast = ({ visible, message, type, onHide }: any) => {
   if (!visible) return null;
 
   const colors = type === 'success' 
-    ? (['#10b981', '#059669'] as const)
+    ? (['#4CAF50', '#45a049'] as const)
     : type === 'error'
-    ? (['#ef4444', '#dc2626'] as const)
-    : (['#3b82f6', '#2563eb'] as const);
+    ? (['#FF3B30', '#E53935'] as const)
+    : (['#2196F3', '#1976D2'] as const);
 
   return (
     <Animated.View 
@@ -102,7 +102,7 @@ const ConfirmModal = ({ visible, title, message, onConfirm, onCancel }: any) => 
       <View style={styles.confirmModalOverlay}>
         <Animated.View style={[styles.confirmModalContent, { transform: [{ scale: scaleValue }] }]}>
           <LinearGradient
-            colors={['#FF3B30', '#dc2626']}
+            colors={['#FF3B30', '#E53935']}
             style={styles.confirmModalHeader}
           >
             <Text style={styles.confirmModalIcon}>⚠️</Text>
@@ -119,7 +119,7 @@ const ConfirmModal = ({ visible, title, message, onConfirm, onCancel }: any) => 
             </TouchableOpacity>
             <TouchableOpacity onPress={onConfirm}>
               <LinearGradient
-                colors={['#ef4444', '#dc2626']}
+                colors={['#FF3B30', '#E53935']}
                 style={styles.confirmModalBtnConfirm}
               >
                 <Text style={styles.confirmModalBtnConfirmText}>Xóa</Text>

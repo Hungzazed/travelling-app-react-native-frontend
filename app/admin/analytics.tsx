@@ -617,16 +617,16 @@ const styles = StyleSheet.create({
     }),
   },
   statCardBlue: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#2196F3',
   },
   statCardPurple: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: '#9C27B0',
   },
   statCardPink: {
-    backgroundColor: '#EC4899',
+    backgroundColor: '#E91E63',
   },
   statCardGreen: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#4CAF50',
   },
   statGlow: {
     position: 'absolute',

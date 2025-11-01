@@ -244,7 +244,7 @@ export default function AdminReviewsScreen() {
   };
 
   const getTypeColor = (type: string) => {
-    return type === 'tour' ? ['#667eea', '#764ba2'] as const : ['#f093fb', '#f5576c'] as const;
+    return type === 'tour' ? ['#2196F3', '#1976D2'] as const : ['#FF9800', '#F57C00'] as const;
   };
 
   const getTypeIcon = (type: string) => {

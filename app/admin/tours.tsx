@@ -325,19 +325,19 @@ export default function AdminToursScreen() {
           <Text style={styles.statLabel}>Tổng số</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={[styles.statValue, { color: '#F59E0B' }]}>
+          <Text style={[styles.statValue, { color: '#FF9800' }]}>
             {stats.pending}
           </Text>
           <Text style={styles.statLabel}>Chờ duyệt</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={[styles.statValue, { color: '#10B981' }]}>
+          <Text style={[styles.statValue, { color: '#4CAF50' }]}>
             {stats.confirmed}
           </Text>
           <Text style={styles.statLabel}>Đã duyệt</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={[styles.statValue, { color: '#EF4444' }]}>
+          <Text style={[styles.statValue, { color: '#FF3B30' }]}>
             {stats.cancelled}
           </Text>
           <Text style={styles.statLabel}>Đã hủy</Text>

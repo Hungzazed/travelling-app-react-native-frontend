@@ -22,6 +22,7 @@ import { getHotels } from '../../services/hotelService';
 import { getServices } from '../../services/serviceService';
 import { getAllBookings } from '../../services/bookingService';
 import { getReviews } from '../../services/reviewService';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -51,10 +52,10 @@ const Toast = ({ visible, message, type, onHide }: any) => {
   if (!visible) return null;
 
   const colors = type === 'success' 
-    ? (['#10b981', '#059669'] as const)
+    ? (['#4CAF50', '#45a049'] as const)
     : type === 'error'
-    ? (['#ef4444', '#dc2626'] as const)
-    : (['#3b82f6', '#2563eb'] as const);
+    ? (['#FF3B30', '#E53935'] as const)
+    : (['#2196F3', '#1976D2'] as const);
 
   return (
     <Animated.View 
@@ -169,16 +170,6 @@ export default function AdminDashboardScreen() {
       }).start();
     }
   }, [sidebarVisible]);
-
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
-
-  const handleMenuPress = (route: string, menuId: string) => {
-    setActiveMenu(menuId);
-    setSidebarVisible(false);
-    setTimeout(() => router.push(route as any), 300);
-  };
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     setToast({ visible: true, message, type });
@@ -339,7 +330,7 @@ export default function AdminDashboardScreen() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#667eea" />
+        <ActivityIndicator size="large" color="#2196F3" />
         <Text style={styles.loadingText}>Đang tải...</Text>
       </View>
     );
@@ -367,7 +358,7 @@ export default function AdminDashboardScreen() {
       />
 
       {/* Sidebar Modal */}
-      <Modal
+      {/* <Modal
         transparent
         visible={sidebarVisible}
         animationType="none"
@@ -451,15 +442,15 @@ export default function AdminDashboardScreen() {
             onPress={toggleSidebar}
           />
         </View>
-      </Modal>
+      </Modal> */}
 
       {/* Top Header */}
       <View style={styles.topHeader}>
-        <TouchableOpacity style={styles.menuButton} onPress={toggleSidebar}>
+        {/* <TouchableOpacity style={styles.menuButton} onPress={toggleSidebar}>
           <View style={styles.menuButtonLine} />
           <View style={styles.menuButtonLine} />
           <View style={styles.menuButtonLine} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         
         <View style={styles.headerCenter}>
           <Text style={styles.headerLogo}>✈️</Text>
@@ -468,19 +459,21 @@ export default function AdminDashboardScreen() {
 
         <View style={styles.headerRight}>
           <TouchableOpacity 
-            style={styles.notificationBtn}
-            onPress={() => router.push('/admin/tours')}
+            style={styles.notificationButton}
+            onPress={() => router.push('/(tabs)/notifications' as any)}
           >
-            <Text style={styles.notificationIcon}>🔔</Text>
-            {stats.pendingBookings > 0 && (
+            <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
+            {/* {unreadNotifications > 0 && (
               <View style={styles.notificationBadge}>
-                <Text style={styles.notificationBadgeText}>{stats.pendingBookings}</Text>
+                <Text style={styles.notificationBadgeText}>
+                  {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                </Text>
               </View>
-            )}
+            )} */}
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.headerAvatar}
-            onPress={() => router.push('/admin/users')}
+            onPress={() => router.push('/profile')}
           >
             <Text style={styles.headerAvatarText}>{user?.name?.charAt(0).toUpperCase()}</Text>
           </TouchableOpacity>
@@ -505,7 +498,6 @@ export default function AdminDashboardScreen() {
           <View style={[styles.statCard, { borderLeftColor: '#2196F3' }]}>
             <View style={styles.statCardTop}>
               <View style={[styles.statCardIcon, { backgroundColor: '#E3F2FD' }]}>
-                <Text style={styles.statCardEmoji}>�</Text>
               </View>
               <Text style={styles.statCardValue}>{formatNumber(stats.totalUsers)}</Text>
             </View>
@@ -515,7 +507,6 @@ export default function AdminDashboardScreen() {
           <View style={[styles.statCard, { borderLeftColor: '#FF9800' }]}>
             <View style={styles.statCardTop}>
               <View style={[styles.statCardIcon, { backgroundColor: '#FFF3E0' }]}>
-                                <Text style={styles.statCardEmoji}>�</Text>
               </View>
               <Text style={styles.statCardValue}>{formatNumber(stats.totalTours)}</Text>
             </View>
@@ -564,7 +555,7 @@ export default function AdminDashboardScreen() {
         </View>
 
         {/* Pending Bookings Alert */}
-        {stats.pendingBookings > 0 && (
+        {/* {stats.pendingBookings > 0 && (
           <TouchableOpacity 
             style={styles.alertCard}
             onPress={() => router.push('/admin/bookings')}
@@ -579,7 +570,7 @@ export default function AdminDashboardScreen() {
             </View>
             <Text style={styles.alertArrow}>→</Text>
           </TouchableOpacity>
-        )}
+        )} */}
 
         {/* Quick Actions */}
         <View style={styles.quickActions}>
@@ -938,7 +929,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: 8,
   },
   headerLogo: {
@@ -1175,5 +1166,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+    notificationButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#F5F7FA',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
 });

@@ -169,18 +169,6 @@ export default function BookingFormScreen() {
       isValid = false;
     }
 
-    // Validate phone
-    if (!phone.trim()) {
-      newErrors.phone = 'Vui lòng nhập số điện thoại';
-      isValid = false;
-    } else if (phone.trim().length < 10) {
-      newErrors.phone = 'Số điện thoại phải có ít nhất 10 số';
-      isValid = false;
-    } else if (!/^[0-9+\-\s()]+$/.test(phone)) {
-      newErrors.phone = 'Số điện thoại chỉ được chứa số và ký tự +, -, (), khoảng trắng';
-      isValid = false;
-    }
-
     // Address is optional but show message if empty
     if (!address.trim()) {
       newErrors.address = 'Nên nhập địa chỉ để chúng tôi liên hệ tốt hơn';
@@ -491,27 +479,6 @@ export default function BookingFormScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Số điện thoại <Text style={styles.required}>*</Text></Text>
-            <TextInput
-              style={[styles.input, errors.phone && styles.inputError]}
-              placeholder="0123456789"
-              value={phone}
-              onChangeText={(text) => {
-                setPhone(text);
-                if (errors.phone) clearError('phone');
-              }}
-              keyboardType="phone-pad"
-              editable={!isSubmitting}
-            />
-            {errors.phone ? (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorIcon}>⚠️</Text>
-                <Text style={styles.errorText}>{errors.phone}</Text>
-              </View>
-            ) : null}
-          </View>
-
-          <View style={styles.inputGroup}>
             <Text style={styles.label}>Địa chỉ</Text>
             <TextInput
               style={[styles.input, errors.address && styles.inputWarning]}
@@ -555,8 +522,6 @@ export default function BookingFormScreen() {
             <Text style={styles.termsLink}>Chính sách bảo mật</Text> của chúng tôi
           </Text>
         </View>
-
-        <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Bottom Bar */}
@@ -884,17 +849,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   peopleButton: {
-    width: 48,
-    height: 48,
+    width: 24,
+    height: 24,
     borderRadius: 24,
     backgroundColor: '#2196F3',
     justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#2196F3',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+    alignItems: 'center'
   },
   peopleButtonDisabled: {
     backgroundColor: '#B0B0B0',
@@ -902,7 +862,7 @@ const styles = StyleSheet.create({
   },
   peopleButtonText: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   peopleCountContainer: {
