@@ -214,7 +214,7 @@ export default function AllToursScreen() {
           style={styles.filterButton}
           onPress={() => setShowFilterModal(true)}
         >
-          <MaterialIcons name="tune" size={24} color="gray" />
+          <MaterialIcons name="tune" size={24} color="#2196F3" />
           {(priceRange !== 'all' || sortBy !== 'default') && (
             <View style={styles.filterBadge} />
           )}
@@ -247,36 +247,37 @@ export default function AllToursScreen() {
             >
               {/* Tour Image */}
               <Image
-                source={{ uri: tour.images?.[0] || 'https://via.placeholder.com/100x100' }}
+                source={{ uri: tour.images?.[0] || 'https://via.placeholder.com/300x200' }}
                 style={styles.tourImage}
               />
+
+              {/* Rating Badge */}
+              <View style={styles.ratingBadge}>
+                <Ionicons name="star" size={14} color="#FFD700" />
+                <Text style={styles.ratingText}>4.5</Text>
+              </View>
 
               {/* Tour Info */}
               <View style={styles.tourInfo}>
                 <Text style={styles.tourName} numberOfLines={1}>
                   {tour.name}
                 </Text>
-                <View style={styles.tourMeta}>
-                  <Ionicons name="people-outline" size={14} color="#999" />
-                  <Text style={styles.tourMetaText}>From</Text>
-                  <Text style={styles.tourDuration}>{tour.duration}</Text>
+                <View style={styles.tourLocationRow}>
+                  <Ionicons name="location-outline" size={14} color="#999" />
+                  <Text style={styles.tourLocation} numberOfLines={1}>
+                    {tour.destination}
+                  </Text>
                 </View>
-                
-                {/* User Avatars */}
-                <View style={styles.avatarsContainer}>
-                  <View style={styles.avatarsRow}>
-                    <View style={[styles.avatar, styles.avatar1]} />
-                    <View style={[styles.avatar, styles.avatar2]} />
-                    <View style={[styles.avatar, styles.avatar3]} />
-                    <View style={[styles.avatar, styles.avatar4]} />
+                <View style={styles.tourFooter}>
+                  <View>
+                    <Text style={styles.tourPrice}>
+                      {tour.pricePerPerson.toLocaleString('vi-VN')}₫
+                    </Text>
+                  </View>
+                  <View style={styles.tourBookButton}>
+                    <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
                   </View>
                 </View>
-              </View>
-
-              {/* Rating */}
-              <View style={styles.ratingBadge}>
-                <Ionicons name="star" size={14} color="#FFA500" />
-                <Text style={styles.ratingText}>4.5</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -518,92 +519,73 @@ const styles = StyleSheet.create({
   tourCard: {
     width: (width - 56) / 2,
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 14,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
-    shadowRadius: 6,
+    shadowRadius: 8,
     elevation: 3,
   },
   tourImage: {
     width: '100%',
     height: (width - 56) / 2,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#E0E0E0',
   },
   tourInfo: {
-    padding: 12,
+    padding: 14,
   },
   tourName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1A1A',
     marginBottom: 6,
   },
-  tourMeta: {
+  tourLocationRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 12,
     gap: 4,
-    marginBottom: 10,
   },
-  tourMetaText: {
-    fontSize: 12,
-    color: '#999999',
+  tourLocation: {
+    fontSize: 13,
+    color: '#999',
+    flex: 1,
   },
-  tourDuration: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#000000',
-  },
-  avatarsContainer: {
-    marginTop: 4,
-  },
-  avatarsRow: {
+  tourFooter: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    marginLeft: -8,
+  tourPrice: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2196F3',
   },
-  avatar1: {
-    backgroundColor: '#FF6B6B',
-    marginLeft: 0,
-  },
-  avatar2: {
-    backgroundColor: '#4ECDC4',
-  },
-  avatar3: {
-    backgroundColor: '#FFE66D',
-  },
-  avatar4: {
-    backgroundColor: '#95E1D3',
+  tourBookButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#2196F3',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ratingBadge: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 12,
+    right: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 12,
     gap: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   ratingText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1A1A',
   },
   loadingContainer: {
     flex: 1,
