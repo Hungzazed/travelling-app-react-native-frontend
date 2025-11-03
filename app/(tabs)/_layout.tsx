@@ -1,7 +1,34 @@
-import { Tabs } from "expo-router";
+import { Tabs, useFocusEffect } from "expo-router";
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { useState, useEffect, useCallback } from 'react';
+import { getCurrentUser } from '../../services/authService';
 
 export default function TabLayout() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkAuth = useCallback(async () => {
+    try {
+      const user = await getCurrentUser();
+      setIsAuthenticated(!!user);
+    } catch (error) {
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // Kiểm tra lại trạng thái đăng nhập mỗi khi tab được focus
+  useFocusEffect(
+    useCallback(() => {
+      checkAuth();
+    }, [checkAuth])
+  );
+
   return (
     <Tabs
       screenOptions={{
@@ -68,6 +95,7 @@ export default function TabLayout() {
               color={color} 
             />
           ),
+          href: isAuthenticated ? undefined : null, // Ẩn tab nếu chưa đăng nhập
         }} 
       />
       <Tabs.Screen 
@@ -81,6 +109,7 @@ export default function TabLayout() {
               color={color} 
             />
           ),
+          href: isAuthenticated ? undefined : null, // Ẩn tab nếu chưa đăng nhập
         }} 
       />
       <Tabs.Screen 

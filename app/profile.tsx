@@ -217,7 +217,7 @@ export default function ProfileScreen() {
 
           <TouchableOpacity 
             style={styles.menuItem}
-            onPress={() => router.push('/(tabs)/notifications')}
+            onPress={() => router.push('/notifications')}
           >
             <Text style={styles.menuIcon}>🔔</Text>
             <Text style={styles.menuText}>Thông báo</Text>

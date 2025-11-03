@@ -458,9 +458,9 @@ export default function AdminDashboardScreen() {
         </View>
 
         <View style={styles.headerRight}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.notificationButton}
-            onPress={() => router.push('/(tabs)/notifications' as any)}
+            onPress={() => router.push('/notifications' as any)}
           >
             <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
             {/* {unreadNotifications > 0 && (

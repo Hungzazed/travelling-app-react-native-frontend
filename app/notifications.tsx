@@ -13,7 +13,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getCurrentUser } from '../../services/authService';
+import { getCurrentUser } from '../services/authService';
 import {
   getNotifications,
   markAsRead,
@@ -24,7 +24,7 @@ import {
   getNotificationIcon,
   getNotificationColor,
   formatNotificationTime,
-} from '../../services/notificationService';
+} from '../services/notificationService';
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -158,6 +158,14 @@ export default function NotificationsScreen() {
     }
   };
 
+  const handleGoBack = () => {
+    if (user?.role === 'admin') {
+      router.push('/admin');
+    } else {
+      router.push('/(tabs)');
+    }
+  };
+
   const filteredNotifications = notifications;
 
   if (isLoading) {
@@ -175,7 +183,10 @@ export default function NotificationsScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerFull}>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
           <View style={styles.headerTop}>
             <Text style={styles.headerTitle}>Thông báo</Text>
             {unreadCount > 0 && (
@@ -184,10 +195,8 @@ export default function NotificationsScreen() {
               </View>
             )}
           </View>
-          <Text style={styles.headerSubtitle}>
-            Cập nhật thông tin mới nhất về tour của bạn
-          </Text>
         </View>
+        <View style={styles.backButton} />
       </View>
 
       {/* Filter Tabs */}
@@ -236,7 +245,7 @@ export default function NotificationsScreen() {
                 !notification.isRead && styles.unreadCard,
               ]}
               activeOpacity={0.7}
-              onPress={() => handleNotificationPress(notification)}
+              // onPress={() => handleNotificationPress(notification)}
               onLongPress={() => confirmDeleteNotification(notification.id)}
             >
               <View
@@ -395,6 +404,9 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
     paddingBottom: 16,
     paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
@@ -408,23 +420,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  headerFull: {
-    flex: 1,
-  },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: '700',
     color: '#1A1A1A',
     marginRight: 8,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#666',
   },
   badge: {
     backgroundColor: '#FF3B30',

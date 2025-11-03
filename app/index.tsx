@@ -31,11 +31,14 @@ export default function Index() {
           router.replace('/(tabs)');
         }
       } else {
-        router.replace('/login');
+        // Không yêu cầu đăng nhập, cho phép truy cập trang chủ
+        console.log('📱 Guest user, redirecting to home...');
+        router.replace('/(tabs)');
       }
     } catch (error) {
       console.error('Auth check error:', error);
-      router.replace('/login');
+      // Khi có lỗi, vẫn cho phép truy cập trang chủ
+      router.replace('/(tabs)');
     } finally {
       setIsChecking(false);
     }
@@ -44,7 +47,7 @@ export default function Index() {
   // Hiển thị loading screen
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-      <ActivityIndicator size="large" color="#007AFF" />
+      <ActivityIndicator size="large" color="#2196F3" />
     </View>
   );
 }
