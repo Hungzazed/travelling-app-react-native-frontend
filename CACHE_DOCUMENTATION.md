@@ -24,19 +24,19 @@ Hệ thống caching này sử dụng **SQLite** kết hợp với **Stale-While
 
 ```
 ┌─────────────────────────────────────────────┐
-│           User Interface (React Native)      │
+│           User Interface (React Native)     │
 └──────────────────┬──────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────┐
-│    Services (tourService, bookingService)    │
+│    Services (tourService, bookingService)   │
 └──────────────────┬──────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────┐
-│           CacheService (SWR Logic)           │
+│           CacheService (SWR Logic)          │
 └──────────────────┬──────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────┐
-│         Database Layer (SQLite)              │
+│         Database Layer (SQLite)             │
 │  ┌────────┬──────────┬────────────────────┐ │
 │  │ Tours  │ Bookings │  Notifications     │ │
 │  │ Cache  │  Cache   │     Cache          │ │
