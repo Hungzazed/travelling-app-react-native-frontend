@@ -42,16 +42,26 @@ export default function NotificationsScreen() {
 
   useEffect(() => {
     loadUser();
-    loadNotifications();
-    loadUnreadCount();
-  }, [selectedFilter]);
+  }, []);
+
+  useEffect(() => {
+    // Chỉ load thông báo khi đã có user
+    if (user) {
+      loadNotifications();
+      loadUnreadCount();
+    }
+  }, [selectedFilter, user]);
 
   const loadUser = async () => {
     try {
       const userData = await getCurrentUser();
       setUser(userData);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error loading user:', error);
+      setIsLoading(false);
+      // Redirect về trang chủ nếu không có user
+      router.replace('/');
     }
   };
 

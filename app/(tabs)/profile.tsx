@@ -99,12 +99,18 @@ export default function ProfileScreen() {
       // Clear user state
       setUser(null);
       
-      // Chuyển về trang login
-      console.log('➡️ Redirecting to login...');
-      router.replace('/login');
+      // Navigate về trang chủ và force reload
+      router.replace('/(tabs)');
+      
+      // Reload lại trang sau một chút để đảm bảo tab layout được update
+      setTimeout(() => {
+        loadUser();
+      }, 100);
       
     } catch (error) {
       console.error('❌ Logout failed:', error);
+      setIsLoggingOut(false);
+    } finally {
       setIsLoggingOut(false);
     }
   };

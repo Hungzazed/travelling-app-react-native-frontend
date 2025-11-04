@@ -1,17 +1,22 @@
-import { Tabs, useFocusEffect } from "expo-router";
+import { Tabs, useFocusEffect, useSegments, useRouter } from "expo-router";
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useState, useEffect, useCallback } from 'react';
 import { getCurrentUser } from '../../services/authService';
+import { AppState } from 'react-native';
 
 export default function TabLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const segments = useSegments();
 
   const checkAuth = useCallback(async () => {
     try {
       const user = await getCurrentUser();
-      setIsAuthenticated(!!user);
+      const authenticated = !!user;
+      console.log('🔍 Tab Layout - Auth check:', authenticated ? 'Logged in' : 'Logged out');
+      setIsAuthenticated(authenticated);
     } catch (error) {
+      console.log('🔍 Tab Layout - Auth check: Error, setting to logged out');
       setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
@@ -25,9 +30,30 @@ export default function TabLayout() {
   // Kiểm tra lại trạng thái đăng nhập mỗi khi tab được focus
   useFocusEffect(
     useCallback(() => {
+      console.log('🔍 Tab Layout - Focus effect triggered');
       checkAuth();
     }, [checkAuth])
   );
+
+  // Kiểm tra auth khi app state thay đổi (foreground/background)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        console.log('🔍 Tab Layout - App became active, checking auth');
+        checkAuth();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [checkAuth]);
+
+  // Kiểm tra auth mỗi khi route thay đổi
+  useEffect(() => {
+    console.log('🔍 Tab Layout - Segments changed:', segments);
+    checkAuth();
+  }, [segments, checkAuth]);
 
   return (
     <Tabs

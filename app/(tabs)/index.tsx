@@ -98,9 +98,14 @@ export default function HomeScreen() {
           const userData = await getCurrentUser();
           console.log("Updated user data:", userData);
           setUser(userData);
-          await loadUnreadNotifications();
+          // Chỉ load thông báo khi đã đăng nhập
+          if (userData) {
+            await loadUnreadNotifications();
+          }
         } catch (error) {
           console.error("Error reloading user data:", error);
+          setUser(null);
+          setUnreadNotifications(0);
         }
       };
 
@@ -140,8 +145,10 @@ export default function HomeScreen() {
       // Load initial tours
       await loadDataByCategory();
 
-      // Load unread notifications count
-      await loadUnreadNotifications();
+      // Load unread notifications count chỉ khi đã đăng nhập
+      if (userData) {
+        await loadUnreadNotifications();
+      }
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
@@ -155,6 +162,8 @@ export default function HomeScreen() {
       setUnreadNotifications(count);
     } catch (error) {
       console.error("Error loading unread notifications:", error);
+      // Không hiển thị lỗi cho người dùng, chỉ log
+      setUnreadNotifications(0);
     }
   };
 
@@ -236,7 +245,7 @@ export default function HomeScreen() {
   const onRefresh = async () => {
     setRefreshing(true);
     await loadData();
-    await loadUnreadNotifications();
+    // loadUnreadNotifications đã được gọi trong loadData nếu user đã đăng nhập
     setRefreshing(false);
   };
 
@@ -333,18 +342,20 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={styles.notificationButton}
-            onPress={() => router.push("/(tabs)/notifications" as any)}>
-            <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
-            {unreadNotifications > 0 && (
-              <View style={styles.notificationBadge}>
-                <Text style={styles.notificationBadgeText}>
-                  {unreadNotifications > 99 ? "99+" : unreadNotifications}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
+          {user && (
+            <TouchableOpacity
+              style={styles.notificationButton}
+              onPress={() => router.push("/(tabs)/notifications" as any)}>
+              <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
+              {unreadNotifications > 0 && (
+                <View style={styles.notificationBadge}>
+                  <Text style={styles.notificationBadgeText}>
+                    {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 

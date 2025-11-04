@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Cấu hình base URL cho API
-const API_BASE_URL = 'http://localhost:3000/v1';
+const API_BASE_URL = 'https://travel-app-backend-55739a9dcb00.herokuapp.com/v1';
 
 // Tạo instance axios
 const api = axios.create({
