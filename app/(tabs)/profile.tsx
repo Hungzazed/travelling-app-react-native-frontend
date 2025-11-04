@@ -89,20 +89,10 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     try {
-      console.log('🔄 Starting logout...');
       setIsLoggingOut(true);
-      
-      // Logout và xóa tokens
       await logout();
-      console.log('✅ Logout successful');
-      
-      // Clear user state
       setUser(null);
-      
-      // Navigate về trang chủ và force reload
       router.replace('/(tabs)');
-      
-      // Reload lại trang sau một chút để đảm bảo tab layout được update
       setTimeout(() => {
         loadUser();
       }, 100);

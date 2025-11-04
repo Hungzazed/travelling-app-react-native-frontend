@@ -94,11 +94,8 @@ export default function HomeScreen() {
     React.useCallback(() => {
       const reloadUserData = async () => {
         try {
-          console.log("Reloading user data on focus...");
           const userData = await getCurrentUser();
-          console.log("Updated user data:", userData);
           setUser(userData);
-          // Chỉ load thông báo khi đã đăng nhập
           if (userData) {
             await loadUnreadNotifications();
           }
@@ -117,12 +114,10 @@ export default function HomeScreen() {
     loadDataByCategory();
   }, [selectedCategory, sortBy]);
 
-  // Auto-slide banner
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => {
         const nextSlide = (prev + 1) % bannerSlides.length;
-        // Scroll to next slide
         if (slideScrollRef.current) {
           slideScrollRef.current.scrollTo({
             x: nextSlide * width,
@@ -131,7 +126,7 @@ export default function HomeScreen() {
         }
         return nextSlide;
       });
-    }, 3500); // Change slide every 3.5 seconds
+    }, 2000); // Change slide every 2 seconds
 
     return () => clearInterval(interval);
   }, []);
@@ -181,7 +176,7 @@ export default function HomeScreen() {
         params.sortBy = "createdAt:desc";
       } else if (selectedCategory === "Tiết kiệm") {
         // Budget friendly: Tours <= 3,000,000 VND (Hạ Long 2.5tr, Vũng Tàu 1.8tr)
-        params.maxPrice = 3000000;
+        // Không gửi maxPrice lên server, sẽ lọc ở client
         params.sortBy = "pricePerPerson:asc";
       } else if (selectedCategory === "Núi non") {
         // Mountains: Sapa (Lào Cai) - vùng núi
@@ -189,8 +184,17 @@ export default function HomeScreen() {
       }
 
       const toursData = await getTours(params);
-      setTours(toursData.results);
-      setFilteredTours(toursData.results);
+      
+      // Lọc theo giá ở phía client nếu là category "Tiết kiệm"
+      let filteredResults = toursData.results;
+      if (selectedCategory === "Tiết kiệm") {
+        filteredResults = toursData.results.filter(
+          (tour: any) => tour.pricePerPerson <= 3000000
+        );
+      }
+      
+      setTours(filteredResults);
+      setFilteredTours(filteredResults);
     } catch (error) {
       console.error("Error loading tours by category:", error);
     }
@@ -221,11 +225,22 @@ export default function HomeScreen() {
         sortBy,
       };
 
-      if (minPrice) params.minPrice = parseInt(minPrice);
-      if (maxPrice) params.maxPrice = parseInt(maxPrice);
-
+      // Không gửi minPrice và maxPrice lên server, sẽ lọc ở client
       const toursData = await getTours(params);
-      setTours(toursData.results);
+      
+      // Lọc theo giá ở phía client
+      let filteredResults = toursData.results;
+      
+      if (minPrice || maxPrice) {
+        filteredResults = toursData.results.filter((tour: any) => {
+          const price = tour.pricePerPerson;
+          const min = minPrice ? parseInt(minPrice) : 0;
+          const max = maxPrice ? parseInt(maxPrice) : Infinity;
+          return price >= min && price <= max;
+        });
+      }
+      
+      setTours(filteredResults);
     } catch (error) {
       console.error("Error applying filters:", error);
     } finally {
@@ -1230,7 +1245,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   bannerSlide: {
-    width: width - 32,
+    width: width,
     height: 180,
     position: "relative",
   },
