@@ -4,22 +4,25 @@
     "slug": "traval-app-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.svg",
+    "icon": "./assets/icon.png",
     "scheme": "travelapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icon.svg",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.travelapp.frontend"
+      "bundleIdentifier": "com.travelapp.frontend",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.svg",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.travelapp.frontend",
@@ -29,13 +32,19 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/icon.svg"
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
       "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1aecb4f8-699d-4a34-8ea2-57db0c0891d5"
+      }
     }
   }
 }
