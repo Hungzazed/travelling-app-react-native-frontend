@@ -10,6 +10,7 @@ import {
   Modal,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -180,7 +181,7 @@ export default function NotificationsScreen() {
   // Hiển thị màn hình đăng nhập nếu chưa đăng nhập
   if (!user) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar style="dark" />
         <View style={styles.loginPromptContainer}>
           <Ionicons name="notifications-off-outline" size={80} color="#CCCCCC" />
@@ -195,12 +196,12 @@ export default function NotificationsScreen() {
             <Text style={styles.loginButtonText}>Đăng nhập ngay</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
 
       {/* Header */}
@@ -208,11 +209,11 @@ export default function NotificationsScreen() {
         <View style={styles.headerFull}>
           <View style={styles.headerTop}>
             <Text style={styles.headerTitle}>Thông báo</Text>
-            {unreadCount > 0 && (
+            {/* {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{unreadCount}</Text>
               </View>
-            )}
+            )} */}
           </View>
           <Text style={styles.headerSubtitle}>
             Cập nhật thông tin mới nhất về tour của bạn
@@ -400,7 +401,7 @@ export default function NotificationsScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 

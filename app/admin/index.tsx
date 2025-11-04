@@ -12,6 +12,7 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -339,7 +340,7 @@ export default function AdminDashboardScreen() {
   if (!user || user.role !== 'admin') return null;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
       
       <Toast 
@@ -602,7 +603,7 @@ export default function AdminDashboardScreen() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

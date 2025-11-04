@@ -192,7 +192,7 @@ export default function NotificationsScreen() {
       <StatusBar style="dark" />
 
       {/* Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
           <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
         </TouchableOpacity>
@@ -207,7 +207,7 @@ export default function NotificationsScreen() {
           </View>
         </View>
         <View style={styles.backButton} />
-      </View>
+      </View> */}
 
       {/* Filter Tabs */}
       <View style={styles.filterContainer}>

@@ -12,6 +12,7 @@ import {
   Dimensions,
   Modal,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getTours, Tour } from "../../services/tourService";
@@ -328,15 +329,15 @@ export default function HomeScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <SafeAreaView style={styles.loadingContainer} edges={['top']}>
         <ActivityIndicator size="large" color="#2196F3" />
         <Text style={styles.loadingText}>Đang tải...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
 
       {/* Header */}
@@ -1071,7 +1072,7 @@ export default function HomeScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -1096,7 +1097,6 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 30,
     paddingBottom: 16,
     backgroundColor: "#FFFFFF",
     shadowColor: "#000",

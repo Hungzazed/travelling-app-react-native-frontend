@@ -11,6 +11,7 @@ import {
   Image,
   Modal,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -135,7 +136,7 @@ export default function BookingsScreen() {
   // Hiển thị màn hình đăng nhập nếu chưa đăng nhập
   if (!user) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar style="dark" />
         <View style={styles.loginPromptContainer}>
           <Ionicons name="calendar-outline" size={80} color="#CCCCCC" />
@@ -150,12 +151,12 @@ export default function BookingsScreen() {
             <Text style={styles.loginButtonText}>Đăng nhập ngay</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
 
       {/* Header */}
@@ -335,7 +336,7 @@ export default function BookingsScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
