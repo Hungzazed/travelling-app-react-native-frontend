@@ -1,4 +1,5 @@
 import api from './api';
+import { CacheService, CacheTTL, createCacheKey } from './cacheService';
 
 export type NotificationType = 'booking' | 'system' | 'service' | 'promotion' | 'reminder';
 export type NotificationPriority = 'low' | 'normal' | 'high';
@@ -36,32 +37,91 @@ export interface NotificationsResponse {
   totalResults: number;
 }
 
-export const getNotifications = async (params?: GetNotificationsParams): Promise<NotificationsResponse> => {
-  const response = await api.get('/notifications', { params });
-  return response.data;
+/**
+ * Get notifications với caching
+ */
+export const getNotifications = async (
+  params?: GetNotificationsParams,
+  onUpdate?: (data: NotificationsResponse) => void
+): Promise<NotificationsResponse> => {
+  const cacheKey = createCacheKey.notifications('current-user', params?.isRead === false);
+  
+  return CacheService.getWithSWR<NotificationsResponse>(
+    cacheKey,
+    'notifications_cache',
+    async () => {
+      const response = await api.get('/notifications', { params });
+      return response.data;
+    },
+    onUpdate,
+    CacheTTL.NOTIFICATIONS
+  );
 };
 
+/**
+ * Get notification by ID (không cache vì thường chỉ xem 1 lần)
+ */
 export const getNotificationById = async (notificationId: string): Promise<Notification> => {
   const response = await api.get(`/notifications/${notificationId}`);
   return response.data;
 };
 
+/**
+ * Mark as read - Invalidate cache
+ */
 export const markAsRead = async (notificationId: string): Promise<Notification> => {
   const response = await api.patch(`/notifications/${notificationId}/read`);
+  
+  // Invalidate notifications cache
+  await CacheService.invalidatePattern('notifications:', 'notifications_cache');
+  
   return response.data;
 };
 
+/**
+ * Mark all as read - Invalidate cache
+ */
 export const markAllAsRead = async (): Promise<void> => {
   await api.patch('/notifications/mark-all-read');
+  
+  // Invalidate all notifications cache
+  await CacheService.invalidatePattern('notifications:', 'notifications_cache');
 };
 
+/**
+ * Delete notification - Invalidate cache
+ */
 export const deleteNotification = async (notificationId: string): Promise<void> => {
   await api.delete(`/notifications/${notificationId}`);
+  
+  // Invalidate notifications cache
+  await CacheService.invalidatePattern('notifications:', 'notifications_cache');
 };
 
-export const getUnreadCount = async (): Promise<number> => {
-  const response = await api.get('/notifications/unread-count');
-  return response.data.count;
+/**
+ * Get unread count với caching
+ */
+export const getUnreadCount = async (
+  onUpdate?: (count: number) => void
+): Promise<number> => {
+  const cacheKey = createCacheKey.notificationCount('current-user');
+  
+  const result = await CacheService.getWithSWR<{ count: number }>(
+    cacheKey,
+    'notifications_cache',
+    async () => {
+      const response = await api.get('/notifications/unread-count');
+      return { count: response.data.count };
+    },
+    (data) => {
+      if (onUpdate) {
+        onUpdate(data.count);
+      }
+    },
+    CacheTTL.NOTIFICATIONS
+  );
+  
+  return result.count;
 };
 
 // Helper functions

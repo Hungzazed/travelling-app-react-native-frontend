@@ -1,5 +1,6 @@
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CacheService } from './cacheService';
 
 export interface RegisterData {
   name: string;
@@ -95,6 +96,11 @@ export const logout = async (): Promise<void> => {
     await AsyncStorage.removeItem('refreshToken');
     await AsyncStorage.removeItem('user');
     console.log('Logout: Tokens removed successfully');
+    
+    // Clear all cache khi logout
+    console.log('Logout: Clearing all cache...');
+    await CacheService.clearAllCache();
+    console.log('Logout: Cache cleared successfully');
   }
 };
 
