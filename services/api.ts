@@ -30,31 +30,7 @@ api.interceptors.request.use(
 
 // Interceptor để xử lý response
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    try {
-      if (error && error.response) {
-        // Server trả về lỗi
-        const { status, data } = error.response;
-        const msg = (data && (data.message || (typeof data === 'string' ? data : JSON.stringify(data)))) || 'Unknown error';
-        console.error(`API Error [${status}]: ${msg}`);
-      } else if (error && error.request) {
-        // Request được gửi nhưng không nhận được response
-        console.error('Network Error:', String(error.message));
-      } else {
-        // Lỗi khác
-        console.error('Error:', String(error && error.message));
-      }
-    } catch (logErr) {
-      // Ensure logging never throws
-      try {
-        console.error('Logging failure in API interceptor', String(logErr));
-      } catch (_e) {
-        // swallow
-      }
-    }
-    return Promise.reject(error);
-  }
+  (response) => response
 );
 
 export default api;
