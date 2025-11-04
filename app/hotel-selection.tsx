@@ -981,7 +981,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2196F3',
   },
   modalSelectButtonText: {
-    color: '#2196F3',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
