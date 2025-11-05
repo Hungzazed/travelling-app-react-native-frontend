@@ -1,11 +1,11 @@
 import { CacheDB } from './database';
 
 export const CacheTTL = {
-  TOURS: 5 * 60 * 1000, // 5 phút
-  TOUR_DETAIL: 10 * 60 * 1000, // 10 phút
-  BOOKINGS: 1 * 60 * 1000, // 1 phút
-  NOTIFICATIONS: 30 * 1000, // 30 giây
-  USER_PROFILE: 5 * 60 * 1000, // 5 phút
+  TOURS: 300 * 60 * 1000, 
+  TOUR_DETAIL: 300 * 60 * 1000, 
+  BOOKINGS: 30 * 60 * 1000, 
+  NOTIFICATIONS: 30 * 1000, 
+  USER_PROFILE: 30 * 60 * 1000,
 };
 
 type FetchCallback<T> = () => Promise<T>;
