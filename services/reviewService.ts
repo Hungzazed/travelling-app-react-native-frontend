@@ -89,7 +89,7 @@ export const createReview = async (data: CreateReviewData): Promise<Review> => {
   const response = await api.post('/reviews', data);
   
   // Invalidate reviews cache cho target này
-  await CacheService.invalidatePattern('reviews:', 'generic_cache');
+  await CacheService.invalidatePattern('generic_cache');
   
   // Nếu là tour review, cũng invalidate tour cache để cập nhật rating
   if (data.targetType === 'tour') {
@@ -107,7 +107,7 @@ export const updateReview = async (reviewId: string, data: Partial<CreateReviewD
   
   // Invalidate specific review và all reviews
   await CacheService.invalidate(createCacheKey.reviewDetail(reviewId), 'generic_cache');
-  await CacheService.invalidatePattern('reviews:', 'generic_cache');
+  await CacheService.invalidatePattern('generic_cache');
   
   // Invalidate tour/hotel cache nếu có
   if (data.targetId && data.targetType === 'tour') {
@@ -125,5 +125,5 @@ export const deleteReview = async (reviewId: string): Promise<void> => {
   
   // Invalidate all reviews cache
   await CacheService.invalidate(createCacheKey.reviewDetail(reviewId), 'generic_cache');
-  await CacheService.invalidatePattern('reviews:', 'generic_cache');
+  await CacheService.invalidatePattern('generic_cache');
 };
