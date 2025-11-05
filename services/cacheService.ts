@@ -69,8 +69,7 @@ export const CacheService = {
         onUpdate(freshData);
       }
     } catch (error) {
-      console.error(`Error revalidating ${cacheKey}:`, error);
-      throw error;
+
     }
   },
 
@@ -84,9 +83,9 @@ export const CacheService = {
   ): Promise<void> {
     try {
       await CacheDB.delete(table, cacheKey);
-      console.log(`🗑️ Invalidated cache for ${cacheKey}`);
+
     } catch (error) {
-      console.error(`Error invalidating cache for ${cacheKey}:`, error);
+
     }
   },
 
@@ -117,18 +116,14 @@ export const CacheService = {
       const cached = await CacheDB.get<T>(table, cacheKey);
       
       if (cached && !cached.isStale) {
-        console.log(`⏭️ Skip prefetch for ${cacheKey} (cache is fresh)`);
         return;
       }
 
-      // Fetch và cache
-      console.log(`⚡ Prefetching ${cacheKey}...`);
       const data = await fetchFn();
       await CacheDB.set(table, cacheKey, data, ttl);
-      console.log(`✅ Prefetched and cached ${cacheKey}`);
+
     } catch (error) {
-      console.error(`Error prefetching ${cacheKey}:`, error);
-      // Không throw error vì prefetch là optional
+
     }
   },
 
@@ -144,9 +139,8 @@ export const CacheService = {
         CacheDB.clearStale('notifications_cache'),
         CacheDB.clearStale('generic_cache'),
       ]);
-      console.log('🧹 Cleared all stale cache');
     } catch (error) {
-      console.error('Error clearing stale cache:', error);
+
     }
   },
 
@@ -156,9 +150,7 @@ export const CacheService = {
   async clearAllCache(): Promise<void> {
     try {
       await CacheDB.clearAll();
-      console.log('🗑️ Cleared all cache');
     } catch (error) {
-      console.error('Error clearing all cache:', error);
     }
   },
 };
