@@ -239,6 +239,21 @@ export const createCacheKey = {
   },
   
   notificationCount: (userId: string) => `notifications:${userId}:count`,
+  
+  reviews: (targetType?: string, targetId?: string, rating?: number) => {
+    if (targetId) {
+      if (rating) {
+        return `reviews:${targetType}:${targetId}:rating${rating}`;
+      }
+      return `reviews:${targetType}:${targetId}`;
+    }
+    if (targetType) {
+      return `reviews:${targetType}:all`;
+    }
+    return 'reviews:all';
+  },
+  
+  reviewDetail: (id: string) => `review:${id}`,
 };
 
 export default CacheService;
