@@ -1,6 +1,5 @@
 import { CacheDB } from './database';
 
-// Cache TTL configurations (in milliseconds)
 export const CacheTTL = {
   TOURS: 5 * 60 * 1000, // 5 phút
   TOUR_DETAIL: 10 * 60 * 1000, // 10 phút
@@ -9,24 +8,9 @@ export const CacheTTL = {
   USER_PROFILE: 5 * 60 * 1000, // 5 phút
 };
 
-// Callback type cho stale-while-revalidate
 type FetchCallback<T> = () => Promise<T>;
 type UpdateCallback<T> = (data: T) => void;
 
-/**
- * Stale-While-Revalidate Cache Service
- * 
- * Cơ chế hoạt động:
- * 1. Kiểm tra cache có tồn tại không
- * 2. Nếu có cache (kể cả stale):
- *    - Trả về data cached ngay lập tức (fast response)
- *    - Nếu cache stale, fetch data mới từ backend trong background
- *    - Cập nhật cache và gọi callback để update UI
- * 3. Nếu không có cache:
- *    - Fetch data từ backend
- *    - Lưu vào cache
- *    - Trả về data
- */
 export const CacheService = {
   /**
    * Get data với SWR pattern
@@ -44,46 +28,26 @@ export const CacheService = {
     ttl: number = CacheTTL.TOURS
   ): Promise<T> {
     try {
-      // 1. Kiểm tra cache
       const cached = await CacheDB.get<T>(table, cacheKey);
-
       if (cached) {
-        // 2. Có cache - trả về ngay
-        console.log(`📦 Cache HIT for ${cacheKey} (stale: ${cached.isStale})`);
-
-        // 3. Nếu cache stale, fetch data mới trong background
         if (cached.isStale) {
-          console.log(`🔄 Revalidating stale cache for ${cacheKey}...`);
-          
-          // Background revalidation - không await
           this.revalidate(cacheKey, table, fetchFn, onUpdate, ttl)
             .catch(error => {
               console.error(`Error revalidating cache for ${cacheKey}:`, error);
             });
         }
-
         return cached.data;
       }
 
-      // 4. Không có cache - fetch từ backend
-      console.log(`❌ Cache MISS for ${cacheKey}, fetching from backend...`);
       const freshData = await fetchFn();
 
-      // 5. Lưu vào cache
       await CacheDB.set(table, cacheKey, freshData, ttl);
-      console.log(`✅ Cached fresh data for ${cacheKey}`);
-
       return freshData;
     } catch (error) {
-      console.error(`Error in getWithSWR for ${cacheKey}:`, error);
-      
-      // Fallback: nếu có lỗi, thử lấy cache cũ (kể cả stale)
       const cached = await CacheDB.get<T>(table, cacheKey);
       if (cached) {
-        console.log(`⚠️ Using stale cache as fallback for ${cacheKey}`);
         return cached.data;
       }
-      
       throw error;
     }
   },
@@ -99,14 +63,8 @@ export const CacheService = {
     ttl: number = CacheTTL.TOURS
   ): Promise<void> {
     try {
-      // Fetch fresh data
       const freshData = await fetchFn();
-
-      // Update cache
       await CacheDB.set(table, cacheKey, freshData, ttl);
-      console.log(`✅ Revalidated cache for ${cacheKey}`);
-
-      // Notify UI to update
       if (onUpdate) {
         onUpdate(freshData);
       }
@@ -136,16 +94,11 @@ export const CacheService = {
    * Invalidate multiple cache keys (dùng pattern matching)
    */
   async invalidatePattern(
-    pattern: string,
     table: 'tours_cache' | 'bookings_cache' | 'notifications_cache' | 'generic_cache'
   ): Promise<void> {
     try {
-      // Đơn giản hóa: clear toàn bộ table
-      // Trong production có thể implement pattern matching phức tạp hơn
       await CacheDB.clear(table);
-      console.log(`🗑️ Invalidated all cache in ${table} (pattern: ${pattern})`);
     } catch (error) {
-      console.error(`Error invalidating cache pattern ${pattern}:`, error);
     }
   },
 

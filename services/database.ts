@@ -91,7 +91,6 @@ export const CacheDB = {
     }
   },
 
-  // Lấy dữ liệu từ cache
   async get<T>(
     table: 'tours_cache' | 'bookings_cache' | 'notifications_cache' | 'generic_cache',
     key: string

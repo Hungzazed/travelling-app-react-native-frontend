@@ -73,7 +73,7 @@ export const markAsRead = async (notificationId: string): Promise<Notification> 
   const response = await api.patch(`/notifications/${notificationId}/read`);
   
   // Invalidate notifications cache
-  await CacheService.invalidatePattern('notifications:', 'notifications_cache');
+  await CacheService.invalidatePattern('notifications_cache');
   
   return response.data;
 };
@@ -85,7 +85,7 @@ export const markAllAsRead = async (): Promise<void> => {
   await api.patch('/notifications/mark-all-read');
   
   // Invalidate all notifications cache
-  await CacheService.invalidatePattern('notifications:', 'notifications_cache');
+  await CacheService.invalidatePattern('notifications_cache');
 };
 
 /**
@@ -95,7 +95,7 @@ export const deleteNotification = async (notificationId: string): Promise<void> 
   await api.delete(`/notifications/${notificationId}`);
   
   // Invalidate notifications cache
-  await CacheService.invalidatePattern('notifications:', 'notifications_cache');
+  await CacheService.invalidatePattern('notifications_cache');
 };
 
 /**
