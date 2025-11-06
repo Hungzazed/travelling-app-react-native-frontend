@@ -57,7 +57,7 @@ export const createBooking = async (data: CreateBookingData): Promise<Booking> =
   const response = await api.post('/bookings', data);
   
   // Invalidate bookings cache
-  await CacheService.invalidatePattern('bookings:', 'bookings_cache');
+  await CacheService.invalidatePattern('bookings_cache');
   
   return response.data;
 };
@@ -112,7 +112,7 @@ export const cancelBooking = async (bookingId: string): Promise<Booking> => {
   
   // Invalidate specific booking and all bookings list
   await CacheService.invalidate(createCacheKey.bookingDetail(bookingId), 'bookings_cache');
-  await CacheService.invalidatePattern('bookings:', 'bookings_cache');
+  await CacheService.invalidatePattern('bookings_cache');
   
   return response.data;
 };
@@ -125,7 +125,7 @@ export const updateBooking = async (bookingId: string, data: Partial<CreateBooki
   
   // Invalidate specific booking and all bookings list
   await CacheService.invalidate(createCacheKey.bookingDetail(bookingId), 'bookings_cache');
-  await CacheService.invalidatePattern('bookings:', 'bookings_cache');
+  await CacheService.invalidatePattern('bookings_cache');
   
   return response.data;
 };
@@ -160,7 +160,7 @@ export const confirmBooking = async (bookingId: string): Promise<Booking> => {
   
   // Invalidate all bookings cache
   await CacheService.invalidate(createCacheKey.bookingDetail(bookingId), 'bookings_cache');
-  await CacheService.invalidatePattern('bookings:', 'bookings_cache');
+  await CacheService.invalidatePattern('bookings_cache');
   
   return response.data;
 };
@@ -173,7 +173,7 @@ export const rejectBooking = async (bookingId: string): Promise<Booking> => {
   
   // Invalidate all bookings cache
   await CacheService.invalidate(createCacheKey.bookingDetail(bookingId), 'bookings_cache');
-  await CacheService.invalidatePattern('bookings:', 'bookings_cache');
+  await CacheService.invalidatePattern('bookings_cache');
   
   return response.data;
 };
@@ -186,5 +186,5 @@ export const deleteBooking = async (bookingId: string): Promise<void> => {
   
   // Invalidate all bookings cache
   await CacheService.invalidate(createCacheKey.bookingDetail(bookingId), 'bookings_cache');
-  await CacheService.invalidatePattern('bookings:', 'bookings_cache');
+  await CacheService.invalidatePattern('bookings_cache');
 };
